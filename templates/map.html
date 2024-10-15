@@ -472,9 +472,19 @@
 
 </script>
 
-    <!-- 返回按钮 -->
-    <a href="javascript:history.back()" class="back-btn">返回</a>
-
+<a href="javascript:goBack()" class="back-btn">返回</a>
+<script>
+    function goBack() {
+        // 检查是否有浏览历史
+        if (document.referrer) {
+            // 如果有来源页面（referrer），就返回来源页面
+            window.location.href = document.referrer;
+        } else {
+            // 如果没有来源页面，跳转到指定的默认页面
+            window.location.href = 'https://zdong15282847294.github.io/zzdloveyyx.github.uio/';  // 将此处替换为你希望用户返回的页面
+        }
+    }
+</script>
 
 
 </body>
