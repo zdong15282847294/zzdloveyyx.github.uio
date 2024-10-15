@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>我们的地图（可以点开地点哦）</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            margin-top: 50px;
+            color: #FF6600;
+            font-size: 3em;
+        }
+
+        .map-container {
+            position: relative;
+            margin: 10px auto;
+            max-width: 1500px;
+            height: 1200px;
+        }
+
+        .map-container img {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .hotspot {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            width: 5px;
+            height: 5px;
+            cursor: pointer;
+            border: 2px solid #FF6600;
+        }
+
+        .label {
+            position: absolute;
+            font-size: 14px;
+            color: #FF6600;
+            background-color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .location1 { top: 791px; left: 775px; }
+        .label1 { top: 790px; left: 790px; }
+
+        .location2 { top: 774px; left: 792px; }
+        .label2 { top: 773px; left: 807px; }
+
+        .location3 { top: 674px; left: 923px; }
+        .label3 { top: 673px; left: 938px; }
+
+        .location4 { top: 636px; left: 973px; }
+        .label4 { top: 635px; left: 988px; }
+
+        .location5 { top: 842px; left: 1136px; }
+        .label5 { top: 841px; left: 1151px; }
+
+        .location6 { top: 815px; left: 1166px; }
+        .label6 { top: 814px; left: 1181px; }
+
+        .location7 { top: 863px; left: 1039px; }
+        .label7 { top: 862px; left: 1054px; }
+
+        .location8 { top: 777px; left: 1071px; }
+        .label8 { top: 776px; left: 1086px; }
+
+        .location9 { top: 858.84375px; left: 1099.5px; }
+        .label9 { top: 857.84375px; left: 1114.5px; }
+
+        .location10 { top: 849.5px; left: 847.84375px; }
+        .label10 { top: 848.5px; left: 867.5px; }
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 30px; /* 增加内边距 */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 600px; /* 调整宽度 */
+    max-width: 90%;
+    z-index: 2;
+    max-height: 80%; /* 限制最大高度 */
+    overflow: auto; /* 允许内容滚动 */
+}
+
+.popup img {
+    max-width: 100%; /* 确保图片不会超过框的宽度 */
+    height: auto;
+    border-radius: 10px;
+}
+
+        .popup p {
+            margin-top: 10px;
+            color: #333;
+        }
+
+        .close-btn, .prev-btn, .next-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #FF6600;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .prev-btn, .next-btn {
+            margin-right: 10px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+.back-home-btn {
+    position: fixed;
+    bottom: 30px; /* 调整位置 */
+    right: 30px; /* 调整位置 */
+    padding: 10px 20px;
+    background-color: #FF6600;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 50px; /* 圆角按钮 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* 阴影效果 */
+    transition: transform 0.2s, background-color 0.3s; /* 添加动画效果 */
+}
+
+.back-home-btn img {
+    width: 24px; /* 图标大小 */
+    height: 24px;
+    margin-right: 10px; /* 图标和文字之间的间距 */
+}
+
+.back-home-btn:hover {
+    transform: scale(1.1); /* 鼠标悬停时按钮放大 */
+    background-color: #ff4500; /* 鼠标悬停时背景颜色改变 */
+}
+
+    </style>
+</head>
+<body>
+
+    <h1>我们的地图</h1>
+
+    <div class="map-container">
+        <img src="/static/images/your_map_image.jpg" alt="我们的地图">
+
+        <!-- 定义点击地点（8个热点） -->
+        <div class="hotspot location1" data-target="popup1"></div>
+        <div class="label label1">成都</div>
+
+        <div class="hotspot location2" data-target="popup2"></div>
+        <div class="label label2">德阳</div>
+
+        <div class="hotspot location3" data-target="popup3"></div>
+        <div class="label label3">西安</div>
+
+        <div class="hotspot location4" data-target="popup4"></div>
+        <div class="label label4">河津</div>
+
+        <div class="hotspot location5" data-target="popup5"></div>
+        <div class="label label5">南昌</div>
+
+        <div class="hotspot location6" data-target="popup6"></div>
+        <div class="label label6">景德镇</div>
+
+        <div class="hotspot location7" data-target="popup7"></div>
+        <div class="label label7">长沙</div>
+
+        <div class="hotspot location8" data-target="popup8"></div>
+        <div class="label label8">武汉</div>
+
+        <div class="hotspot location9" data-target="popup9"></div>
+        <div class="label label9">宜春</div>
+
+        <div class="hotspot location10" data-target="popup10"></div>
+        <div class="label label10">重庆</div>
+    </div>
+
+    <!-- 弹出框内容（8个地点） -->
+    <div class="overlay" id="overlay" onclick="closePopup()"></div>
+
+    <!-- 第一个地点的弹出框 -->
+    <div class="popup" id="popup1">
+        <img id="popup1-img" src="/static/images/photo1.jpg" alt="成都的照片">
+        <p id="popup1-caption">这是我们一起去过的第一个地方，留下了许多美好回忆！</p>
+        <button class="prev-btn" onclick="prevImage(1)">上一页</button>
+        <button class="next-btn" onclick="nextImage(1)">下一页</button>
+        <button class="close-btn" onclick="closePopup()">关闭</button>
+    </div>
+
+    <!-- 第二个地点的弹出框 -->
+    <div class="popup" id="popup2">
+        <img id="popup2-img" src="/static/images/photo2.jpg" alt="德阳的照片">
+        <p id="popup2-caption">这是另一个特别的地方，见证了我们的成长。</p>
+        <button class="prev-btn" onclick="prevImage(2)">上一页</button>
+        <button class="next-btn" onclick="nextImage(2)">下一页</button>
+        <button class="close-btn" onclick="closePopup()">关闭</button>
+    </div>
+
+    <!-- 第三个地点的弹出框 -->
+    <div class="popup" id="popup3">
+        <img id="popup3-img" src="/static/images/photo3.jpg" alt="西安的照片">
+        <p id="popup3-caption">这是第三个特别的地方，和你在这里度过了美好的时光。</p>
+        <button class="prev-btn" onclick="prevImage(3)">上一页</button>
+        <button class="next-btn" onclick="nextImage(3)">下一页</button>
+        <button class="close-btn" onclick="closePopup()">关闭</button>
+    </div>
+
+    <!-- 第四个地点的弹出框 -->
+    <div class="popup" id="popup4">
+        <img id="popup4-img" src="/static/images/photo4.jpg" alt="河津的照片">
+        <p id="popup4-caption">这是我们最喜欢的第四个地方。</p>
+        <button class="prev-btn" onclick="prevImage(4)">上一页</button>
+        <button class="next-btn" onclick="nextImage(4)">下一页</button>
+        <button class="close-btn" onclick="closePopup()">关闭</button>
+    </div>
+
+    <!-- 第五个地点的弹出框 -->
+    <div class="popup" id="popup5">
+        <img id="popup5-img" src="/static/images/photo5.jpg" alt="南昌的照片">
+        <p id="popup5-caption">这是我们一起走过的第五个地方，永远记住这段旅程。</p>
+        <button class="prev-btn" onclick="prevImage(5)">上一页</button>
+        <button class="next-btn" onclick="nextImage(5)">下一页</button>
+        <button class="close-btn" onclick="closePopup()">关闭</button>
+    </div>
+
+    <!-- 第六个地点的弹出框 -->
+    <div class="popup" id="popup6">
+        <img id="popup6-img" src="/static/images/photo6.jpg" alt="景德镇的照片">
+        <p id="popup6-caption">第六个地点，见证了我们的深厚友谊和爱情。</p>
+        <button class="prev-btn" onclick="prevImage(6)">上一页</button>
+        <button class="next-btn" onclick="nextImage(6)">下一页</button>
+        <button class="close-btn" onclick="closePopup()">关闭</button>
+    </div>
+
+    <!-- 第七个地点的弹出框 -->
+    <div class="popup" id="popup7">
+        <img id="popup7-img" src="/static/images/photo7.jpg" alt="长沙的照片">
+        <p id="popup7-caption">这是第七个特别的地点，我们曾在这里度过美好时光。</p>
+        <button class="prev-btn" onclick="prevImage(7)">上一页</button>
+        <button class="next-btn" onclick="nextImage(7)">下一页</button>
+        <button class="close-btn" onclick="closePopup()">关闭</button>
+    </div>
+
+    <!-- 第八个地点的弹出框 -->
+    <div class="popup" id="popup8">
+        <img id="popup8-img" src="/static/images/photo8.jpg" alt="武汉的照片">
+        <p id="popup8-caption">这是我们的第八个地点，满载着回忆。</p>
+        <button class="prev-btn" onclick="prevImage(8)">上一页</button>
+        <button class="next-btn" onclick="nextImage(8)">下一页</button>
+        <button class="close-btn" onclick="closePopup()">关闭</button>
+    </div>
+
+    <!-- 第九个地点的弹出框 -->
+    <div class="popup" id="popup9">
+        <img id="popup9-img" src="/static/images/photo8.jpg" alt="宜春的照片">
+        <p id="popup9-caption">这是我们的第九个地点，满载着回忆。</p>
+        <button class="prev-btn" onclick="prevImage(9)">上一页</button>
+        <button class="next-btn" onclick="nextImage(9)">下一页</button>
+        <button class="close-btn" onclick="closePopup()">关闭</button>
+    </div>
+
+        <!-- 第九个地点的弹出框 -->
+    <div class="popup" id="popup10">
+        <img id="popup10-img" src="/static/images/photo8.jpg" alt="重庆的照片">
+        <p id="popup10-caption">这是我们的第十个地点，满载着回忆。</p>
+        <button class="prev-btn" onclick="prevImage(10)">上一页</button>
+        <button class="next-btn" onclick="nextImage(10)">下一页</button>
+        <button class="close-btn" onclick="closePopup()">关闭</button>
+    </div>
+    <script>
+        // 每个地点的图片和描述
+        var popupData = {
+            1: {
+                images: ['/static/images/chengdu3.jpg', '/static/images/chengdu2.jpg', '/static/images/chengdu1.jpg'],
+                captions: ['这是我们在成都拍的为数不多的照片！因为我们只玩了一天就回家家了，在这里你给妈妈买了熊猫！', '这里是我们去了宽窄巷子，嚯嚯！问我爱宽窄巷子还是爱你，当然是爱你啦~。',
+                '还带你吃了蛋烘糕，我们和烨儿姐姐一起！简直亚米亚米。'],
+                currentIndex: 0
+            },
+            2: {
+                images: ['/static/images/dy1.jpg', '/static/images/dy2.jpg', '/static/images/dy3.jpg', '/static/images/dy4.jpg', '/static/images/dy5.png', '/static/images/dy6.jpg', '/static/images/dy7.jpg', '/static/images/dy8.jpg'],
+                captions: ['德阳！大德如阳，欢迎乖乖来我的家~,这张照片是家里给你准备的欢迎仪式！嘿嘿~',
+                '这是我们三个在家里拍的一张合照，好瓜哦！你们穿着妈妈买的睡衣哈哈哈哈',
+                '这是我们和爸爸还有邓阿姨去看灯会的时候拍的照片~挖苦挖苦',
+                '和邱爷爷一起在河边散步，在彩虹桥的地方给我们拍的，我们三个站军姿！',
+                '邱爷爷带我们去三星堆',
+                '高中同学在文庙广场给我们拍的拍立得，那个熊猫帽子是我跑回去给你buy的，不知道你还有没有戴它',
+                '德阳唯一真神——贝克基，太好吃了！做到这里我都流口水了！呜呜呜呜想吃',
+                '伤心花卷，但是希望宝宝天天开心不伤心'],
+                currentIndex: 0
+            },
+            3: {
+                images: ['/static/images/xa1.jpg', '/static/images/xa2.jpg', '/static/images/xa3.jpg', '/static/images/xa4.jpg', '/static/images/xa5.jpg', '/static/images/xa6.jpg', '/static/images/xa7.jpg'],
+                captions: ['这是我们第一次西安旅游，我们在钟楼拍照，看到这张照片的时候眼泪就掉下来了，因为我想你了',
+                '我们当时坐在下面喝茶，笑得好瓜哦，但是我觉得这张照片是非常有意义的一张，从此之后，我们的丑照就一发不可收拾了',
+                '我们买的第一对戒指~我还把这个作为了朋友圈的背景好久好久，也是非常具有纪念意义的东西！闪闪发光的很好看',
+                '和圣圣在大唐不夜城拍的照片，宝宝很漂亮~亲亲亲亲！',
+                '这是今年我过生日的时候宝宝来西安找我，我很感动，谢谢宝宝，那个时候虽然断断续续闹矛盾，但是看到你的一瞬间，一切的负面情绪都烟消云散，当时心里想的只有要一直和你在一起，不远千里来见我真的在我心中加满分了，也希望我和宝宝能早点结束异地恋的日子',
+                '这是宝宝毕业啦，然后来西安我们拍的毕业照，宝宝特别的好看，喜欢的很！',
+                '乖乖要去工作了，我来机场送乖乖，分别总是依依不舍的，但是为了更好的以后，我们只有相信彼此，各自努力'],
+                currentIndex: 0
+            },
+            4: {
+                images: ['/static/images/HJ1.jpg', '/static/images/HJ2.jpg', '/static/images/HJ3.jpg', '/static/images/HJ4.jpg', '/static/images/HJ5.jpg', '/static/images/HJ6.jpg', '/static/images/HJ7.jpg', '/static/images/HJ8.jpg', '/static/images/HJ9.jpg'],
+                captions: ['宝宝还记得吗，这是从侯马下火车我们的第一张照片！嘿嘿，也是我第一次去你家玩，开心！你好漂亮哦！那天是做爷爷的车回去的，你在路上也开车呢',
+                '这是我到你家里后拍的照片，我们三个的第一张合照，挖苦挖苦',
+                '这是你带我去你们那里的一个公园玩！然后我们围着哪里走了一圈，去外面吃了小吃',
+                '这是我第二次去你家的时候，和圣圣给你按摩',
+                '我和圣圣是你的保镖！',
+                '这个是圣圣高三在上课，我们去给他送东西，然后在门口拍的照片',
+                '还有这张，我觉得好搞笑哈哈哈哈哈哈哈',
+                '这是我们拍的第一张拍立得，从此走上了拍立得不归路',
+                '这是这次国庆拍的照片拉，我给加上来了嘿嘿，我想说我们之后的路还会很长很长的，我们还要一起在河津拍更多的照片！'],
+                currentIndex: 0
+            },
+            5: {
+                images: ['/static/images/NC1.jpg', '/static/images/NC2.jpg', '/static/images/NC3.jpg', '/static/images/NC4.jpg', '/static/images/NC5.jpg', '/static/images/NC6.jpg', '/static/images/NC7.jpg', '/static/images/NC8.jpg', '/static/images/NC9.jpg', '/static/images/NC10.jpg', '/static/images/NC11.jpg', '/static/images/NC12.jpg', '/static/images/NC13.jpg', '/static/images/NC14.jpg', '/static/images/NC15.jpg', '/static/images/NC16.jpg'],
+                captions: ['第一次合照，伟大性已无需多言，以此纪念我们爱情的开端。',
+                '这个是运动会上拍的照片，我们穿着情侣服！你还发说说说我们很般配',
+                '我们去做DIY戒指，这对戒指我希望我们能永远的保存好，他就像我们两个的第一个造物，第一个娃',
+                '我们一起去看电影，虽然不知道是哪一场了，因为看了好多场电影，去过南昌好多的地方',
+                '这是我们一起去南昌市博物馆',
+                '也是一起去看电影，宝宝真好看！',
+                '我给宝宝做的小蜥蜴，宝宝还留着没有呀~',
+                '我们一起去操场上卖花花，还拍了一张我们两个长得好像好像的照片！亲亲多了果然会越来越像',
+                '下雨天宿舍门口拍的照片，平淡日常',
+                '一起去做的面部护理，挖苦',
+                '校门口的淄博烧烤，宝宝太搞笑了',
+                '这张应该是你出去玩回来还是你实习结束回来我们拍的照片，宝宝可美了！嘿嘿我都犯花痴了',
+                '舌尖大师！我们吃过好多次滴，好怀念呀~',
+                '我毕业拉宝宝~去操场拍的照片！写到这里突然想起，大学期间谈校园恋爱的，好像就我们俩个走了下来，感慨万千',
+                '中海玫瑰园，属于我们的第一个暂时的家',
+                '之后来南昌找你玩，嘿嘿，后面还有一些南昌的照片，我就没放了，南昌这个地方是承载我们记忆最多的地方，我们数不清的回忆都是在这里，如果之后有机会，我们一定要再回到南昌走走逛逛，去吃鸭腿，去操场，去看黄周，去中海玫瑰园，去华东交大，去我们去过的很多地方'],
+                currentIndex: 0
+            },
+            6: {
+                images: ['/static/images/JDZ1.jpg', '/static/images/JDZ2.jpg', '/static/images/JDZ3.jpg', '/static/images/JDZ4.jpg', '/static/images/JDZ5.jpg', '/static/images/JDZ6.jpg', '/static/images/JDZ7.jpg', '/static/images/JDZ8.jpg'],
+                captions: ['这是我们去景德镇玩啦，这好像是陶瓷市场那里，那里有个牌子我在景德镇很想你，然后我们吃了雪糕，然后买了手链嘿嘿',
+                '这个是我们刚到景德镇，我们先去吃了顿饭，荷叶夹~，然后点菜小哥也很友善',
+                '这是我们在酒店下面拍的照片，哇塞塞，简直郎才女貌',
+                '这个是我们去一个镇里玩，天气很热，然后没有拍出好看的照片，你都哭哭了，摸摸你',
+                '然后晚上重新换了一套衣服，我们又去拍了好看的照片！我把你哄好了嘿嘿，宝宝真的非常的漂亮哦！',
+                '这是我们去捏我们的碗！嘿嘿，漂漂亮亮的碗！上面有YYX和ZZD的字母呢',
+                '这是我们最后一天去逛博物馆的时候拍的！那天你觉得我不太高兴因为没有拍出帅帅的我',
+                '溜了溜了，景德镇的这次旅行最影响深刻的时候应该就是你哭哭然后我抱着你，拍拍你的背，亲亲你的脸温柔的哄你吧，我坐在床上，宝宝坐在我的腿上，哎哟哭哭的好可怜哦，不过哄好后当天晚上我们就去拍了美美的照片！'],
+                currentIndex: 0
+            },
+            7: {
+                images: ['/static/images/CS1.jpg', '/static/images/CS2.jpg', '/static/images/CS3.jpg', '/static/images/CS4.jpg', '/static/images/CS5.jpg', '/static/images/CS6.jpg', '/static/images/CS7.jpg', '/static/images/CS8.jpg'],
+                captions: ['长沙我们来啦，这里有好喝的茶颜悦色和好吃的黑色经典臭豆腐呼呼，这也是我最喜欢的一个城市！',
+                '我们去吃的一家长沙菜，湘菜，好像是叫笨萝卜吧，拍了好长时间的队哩，不过味道还是很不错滴，就是给我辣成瓜瓜了',
+                '哈哈哈哈我好瓜瓜哦',
+                '长沙，一个充满夜生活的城市哈哈哈哈哈，半夜两三点街上到处都是人',
+                '这是我们去逛的岳麓书院，嘿嘿！',
+                '去橘子洲头拍照，宝宝也对这次很影响深刻，因为你说我胆子很大，然后直接站上去让别人给我们拍，你说你自己就不太敢，嘿嘿，所以说勇敢的人先享受世界啦',
+                '我们去爱晚亭，妈哟，下超级无敌大暴雨，给我们两个淋成瓜娃娃了都',
+                '鱼嘴巴，我特别喜欢吃的菜，简直亚米亚米！嘿嘿，长沙这次旅行是一次很成功的旅游，不紧张也不太松驰，该玩的景点都去了，该吃的好吃的也吃了!是一次很快乐很成功的旅游！今后我们也要去更多的地方~'],
+                currentIndex: 0
+            },
+            8: {
+                images: ['/static/images/WH1.jpg', '/static/images/WH2.jpg', '/static/images/WH3.jpg', '/static/images/WH4.jpg', '/static/images/WH5.jpg', '/static/images/WH6.jpg', '/static/images/WH7.jpg', '/static/images/WH8.jpg'],
+                captions: ['武汉我们来啦，我们两个在黄鹤楼下面拍的照片！特别的好看！挖苦挖苦耶耶耶耶耶耶',
+                '这里是汉江口，我们拍照拍的很开心，感觉当时有点疯疯癫癫的哈哈哈哈',
+                '哈哈哈哈哈我们两个要合体了！',
+                '哎哟我的妈妈耶~你咋个这么的漂亮呀，简直是我最漂亮的乖乖！受不了了',
+                '武汉长江大桥下面拍的哈哈哈哈哈哈，太搞笑了',
+                '我们去沙滩上耍，还在水里面拍了照片嘿嘿，这个公园叫啥子我都忘记了，不过这个照片感觉我的肌肉都没有了！',
+                '耍了一天了！好累好累呀！不过这张照片我咋个这么帅哦!我晕倒了',
+                '这是我们在车站分别的照片，我一脸的恋恋不舍，因为从这个时候开始，我们就开始异地恋了，呜呜呜呜呜，武汉的旅游小有波折，一开始住的民宿很可怕，然后我们去住了酒店，可能是将要分别对原因，感觉没有在玩的感觉，我只想和你待在一起，现在看来，还是很怀念能够天天见面的日子。'],
+                currentIndex: 0
+            },
+            9: {
+                images: ['/static/images/YC1.jpg', '/static/images/YC2.jpg', '/static/images/YC3.jpg', '/static/images/YC4.jpg', '/static/images/YC5.jpg', '/static/images/YC6.jpg', '/static/images/YC7.jpg', '/static/images/YC8.jpg'],
+                captions: ['这是我们去宜春玩啦嘿嘿~',
+                '前往明月山的路上，准备去滑雪啦~',
+                '你瞅瞅这小情侣多恩爱，哈哈哈',
+                '哈哈哈哈哈哈我们两个是瓜瓜嘛！这张照片好可爱哦',
+                '我们准备去泡温泉了！我记得当时我还感冒了，都没有陪你好好的耍！',
+                '泡泡跑！舒服舒服！还整了桑拿嘿嘿',
+                '我的妈妈咪呀，宝宝你也太好看了吧，我的老天爷，我还记得宝宝你说你很喜欢我穿这件泳衣，嘿嘿，因为比较显身材',
+                '这个是我们和他们的合照，宜春这次旅游虽然说我生病了，但是宝宝把我照顾的很好，嘿嘿，我们也玩的很开心，泡了温泉划了雪，感觉十分滴有意义！'],
+                currentIndex: 0
+            },
+            10: {
+                images: ['/static/images/CQ1.jpg', '/static/images/CQ2.jpg', '/static/images/CQ3.jpg', '/static/images/CQ4.jpg', '/static/images/CQ5.jpg', '/static/images/CQ6.jpg', '/static/images/CQ7.jpg', '/static/images/CQ8.jpg'],
+                captions: ['到重庆咯，我们在洪崖洞下面拍的合照，当时好多人哦！，我们来的时候绕来绕去，走的时候也绕来绕去',
+                '天仙配，我们在洪崖洞下面拍的合照，嘿嘿',
+                '让我尝尝我家宝宝是什么味道！嗷~~',
+                '浅浅中指，不成敬意，嘿嘿',
+                '解放碑~还有美丽的宝宝，我们在那里吃了一些小吃，压马路！',
+                '我们去的时候重庆是旅游淡季，晚上很快就关灯了，而且道路也不通，我们走了好久哦，我都有点不开心了，因为我第一次去重庆旅途的时候玩的很开心，结果这次去没有带宝宝好好的玩',
+                '不吃火锅~就吃烤匠~，我都累的睡着了！',
+                '重庆的火锅！好辣好辣哈哈哈哈，就像我对你的爱一样那么的火辣！'],
+                currentIndex: 0
+            }
+        };
+
+        // 打开弹出框
+        function openPopup(id) {
+            document.getElementById(id).style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+            updatePopupContent(id.replace('popup', '')); // 更新弹出框内容
+        }
+
+        // 关闭弹出框
+        function closePopup() {
+            var popups = document.querySelectorAll('.popup');
+            popups.forEach(function(popup) {
+                popup.style.display = 'none';
+            });
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // 更新弹出框内容（图片和描述）
+        function updatePopupContent(id) {
+            var data = popupData[id];
+            var imgElement = document.getElementById('popup' + id + '-img');
+            var captionElement = document.getElementById('popup' + id + '-caption');
+            imgElement.src = data.images[data.currentIndex];
+            captionElement.textContent = data.captions[data.currentIndex];
+        }
+
+        // 显示上一张图片
+        function prevImage(id) {
+            var data = popupData[id];
+            if (data.currentIndex > 0) {
+                data.currentIndex--;
+                updatePopupContent(id);
+            }
+        }
+
+        // 显示下一张图片
+        function nextImage(id) {
+            var data = popupData[id];
+            if (data.currentIndex < data.images.length - 1) {
+                data.currentIndex++;
+                updatePopupContent(id);
+            }
+        }
+
+        // 为热点区域添加点击事件
+        var hotspots = document.querySelectorAll('.hotspot');
+        hotspots.forEach(function(hotspot) {
+            hotspot.addEventListener('click', function() {
+                var target = hotspot.getAttribute('data-target');
+                openPopup(target);
+            });
+        });
+    </script>
+<script>
+
+</script>
+<button onclick="goHome()" class="back-home-btn">返回</button>
+
+<script>
+    function goHome() {
+        window.location.href = "http://127.0.0.1:5000"; // 假设主页是 index.html
+    }
+</script>
+
+</body>
+</html>
