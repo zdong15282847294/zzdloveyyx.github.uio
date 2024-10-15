@@ -162,6 +162,26 @@
     background-color: #ff4500; /* 鼠标悬停时背景颜色改变 */
 }
 
+        /* 返回按钮样式 */
+        .back-btn {
+            position: fixed;
+            bottom: 20px; /* 距离底部20px */
+            right: 20px; /* 距离右侧20px */
+            padding: 10px 15px;
+            background-color: #FF6600; /* 背景颜色 */
+            color: white; /* 字体颜色 */
+            border: none;
+            border-radius: 5px; /* 圆角 */
+            text-decoration: none; /* 去掉下划线 */
+            font-size: 1.2em;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影效果 */
+        }
+
+        .back-btn:hover {
+            background-color: #ff4500; /* 悬停时的颜色 */
+        }
+
     </style>
 </head>
 <body>
@@ -477,13 +497,11 @@
 <script>
 
 </script>
-<button onclick="goHome()" class="back-home-btn">返回</button>
 
-<script>
-    function goHome() {
-        window.location.href = "http://127.0.0.1:5000"; // 假设主页是 index.html
-    }
-</script>
+    <!-- 返回按钮 -->
+    <a href="javascript:history.back()" class="back-btn">返回</a>
+
+
 
 </body>
 </html>
